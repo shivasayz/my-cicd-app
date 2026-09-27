@@ -1,7 +1,12 @@
 import express from "express";
+import morgan from "morgan";
+import cors from 'cors';
 
 const app = express();
+app.use(cors());
+app.use(morgan('dev'));
 const PORT = 3000;
+
 app.disable("etag");
 app.use((req, res, next) => {
     res.set("Cache-Control", "no-store");
@@ -28,7 +33,6 @@ app.get("/api/health-check", (req, res) => {
         message: "Backend is running successfully",
     });
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
