@@ -46,6 +46,12 @@ app.get("/api/health-check", (req, res) => {
     });
 });
 
+app.get("/api/finance", (req, res) => {
+    res.json({
+        message: "Here are the finance details!",
+    });
+});
+
 if (process.env.NODE_ENV !== "test") {
     app.listen(PORT, () => {
         console.log(`Server running on http://localhost:${PORT}`);
