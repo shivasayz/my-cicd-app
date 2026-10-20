@@ -1,21 +1,39 @@
-name: Deploy Backend
+name: Backend CI/CD
 
-on: 
-  push: 
-    branches: ["main"]
+on: pull_request: branches: ["main"] push: branches: ["main"]
 
-jobs: 
-  deploy: 
-    runs-on: ubuntu-latest
+jobs: test: runs-on: ubuntu-latest
 
-    steps:
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ec2-user
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd ~/my-cicd-app/backend
-            git pull origin main
-            docker compose up -d --build
+steps:
+  - name: Checkout code
+    uses: actions/checkout@v4
+
+  - name: Setup Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: 20
+      cache: npm
+      cache-dependency-path: backend/package-lock.json
+
+  - name: Install dependencies
+    working-directory: backend
+    run: npm ci
+
+  - name: Run tests
+    working-directory: backend
+    run: npm test
+
+
+deploy: needs: test if: github.event_name == 'push' && github.ref == 'refs/heads/main' runs-on: ubuntu-latest
+
+steps:
+  - name: Deploy to EC2
+    uses: appleboy/ssh-action@v1
+    with:
+      host: ${{ secrets.EC2_HOST }}
+      username: ec2-user
+      key: ${{ secrets.EC2_SSH_KEY }}
+      script: |
+        cd ~/my-cicd-app/backend
+        git pull origin main
+        docker compose up -d --build
