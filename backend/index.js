@@ -26,6 +26,12 @@ app.get("/api/products", (req, res) => {
     });
 });
 
+app.get("/api/customers", (req, res) => {
+    res.json({
+        message: "Here are the customers!",
+    });
+});
+
 app.get("/api/status", (req, res) => {
     res.status(200).json({
         status: 200,
