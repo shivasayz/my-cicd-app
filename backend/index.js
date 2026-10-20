@@ -20,6 +20,12 @@ app.get("/api/hello", (req, res) => {
     });
 });
 
+app.get("/api/products", (req, res) => {
+    res.json({
+        message: "Here are the products!",
+    });
+});
+
 app.get("/api/status", (req, res) => {
     res.status(200).json({
         status: 200,
